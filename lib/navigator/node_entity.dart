@@ -10,13 +10,13 @@ import 'package:d_stack/d_stack.dart';
 
 class DNodeEntity {
   /// 节点列表
-  List<DNode> nodeList;
+  late List<DNode> nodeList;
 
   /// 跳转类型
-  String action;
+  late String action;
 
   /// 是否有转场动画
-  bool animated;
+  late bool animated;
 
   DNodeEntity.fromJson(Map json) {
     if (json["nodes"] != null) {
@@ -45,28 +45,28 @@ class DNodeEntity {
 
 class DNode {
   /// 页面路由
-  String target;
+  late String target;
 
   /// 跳转类型
-  String action;
+  late String action;
 
   /// 携带参数
-  Map params;
+  late Map params;
 
   /// 页面类型
-  PageType pageType;
+  late PageType pageType;
 
   /// 是否为homePage
-  bool homePage;
+  late bool homePage;
 
   /// 是否有转场动画
-  bool animated;
+  late bool animated;
 
   /// 是否为临界节点
-  bool boundary;
+  late bool boundary;
 
   /// 页面唯一id
-  String identifier;
+  late String identifier;
 
   DNode.fromJson(Map json) {
     target = json["target"];

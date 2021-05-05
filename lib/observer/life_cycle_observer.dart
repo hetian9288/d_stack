@@ -12,18 +12,13 @@ import 'package:d_stack/d_stack.dart';
 enum DLifeCycleState { create, foreground, background }
 
 class PageModel {
-  String currentPageRoute; // 当前展示的页面路由
-  String prePageRoute; // 前一个展示的页面路由，可能为null
-  String currentPageType; // 页面类型：Flutter/Native
-  String prePageType; // 页面类型：Flutter/Native
-  String actionType; // 操作类型：push/pop
+  String? currentPageRoute; // 当前展示的页面路由
+  String? prePageRoute; // 前一个展示的页面路由，可能为null
+  String? currentPageType; // 页面类型：Flutter/Native
+  String? prePageType; // 页面类型：Flutter/Native
+  String? actionType; // 操作类型：push/pop
 
-  PageModel(
-      {this.currentPageRoute,
-      this.prePageRoute,
-      this.currentPageType,
-      this.prePageType,
-      this.actionType});
+  PageModel({this.currentPageRoute, this.prePageRoute, this.currentPageType, this.prePageType, this.actionType});
 
   @override
   String toString() {
@@ -46,28 +41,22 @@ abstract class DLifeCycleObserver {
 /// 处理页面生命周期
 class LifeCycleHandler {
   static handleLifecycleMessage(Map arguments) {
-    Map pageParams = arguments['page'];
-    Map appParams = arguments['application'];
+    Map? pageParams = arguments['page'];
+    Map? appParams = arguments['application'];
     if (pageParams != null) {
       String appearRoute = pageParams['appearRoute'];
       String disappearRoute = pageParams['disappearRoute'];
       String appearPageType = pageParams['appearPageType'];
       String disappearPageType = pageParams['disappearPageType'];
       String actionType = pageParams['actionType'];
-      PageModel model = PageModel(
-          currentPageRoute: appearRoute,
-          prePageRoute: disappearRoute,
-          currentPageType: appearPageType,
-          prePageType: disappearPageType,
-          actionType: actionType);
+      PageModel model = PageModel(currentPageRoute: appearRoute, prePageRoute: disappearRoute, currentPageType: appearPageType, prePageType: disappearPageType, actionType: actionType);
       DStack.instance.dLifeCycleObserver?.pageAppear(model);
     }
     if (appParams != null) {
       String currentRoute = appParams['currentRoute'];
       String pageType = appParams['pageType'];
       DLifeCycleState state = DLifeCycleState.values[appParams['state']];
-      PageModel model =
-          PageModel(currentPageRoute: currentRoute, currentPageType: pageType);
+      PageModel model = PageModel(currentPageRoute: currentRoute, currentPageType: pageType);
       switch (state) {
         case DLifeCycleState.create:
           DStack.instance.dLifeCycleObserver?.appDidStart(model);

@@ -8,9 +8,9 @@
     <application
         android:name=".DStackApplication"
         android:icon="@mipmap/ic_launcher"
-        android:usesCleartextTraffic="true"
+        android:label="d_stack_example"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:label="d_stack_example">
+        android:usesCleartextTraffic="true">
 
         <meta-data
             android:name="flutterEmbedding"
@@ -28,17 +28,18 @@
                 android:name="io.flutter.embedding.android.SplashScreenDrawable"
                 android:resource="@color/transparent" />
 
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
         </activity>
 
         <activity
             android:name=".NativeOneActivity"
             android:theme="@style/Theme.AppCompat">
 
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
 
         </activity>
         <activity

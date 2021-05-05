@@ -10,8 +10,7 @@ final bool isFlutterProject = true;
 void main() {
   // 注册路由builder , 生命周期监听
   WidgetsFlutterBinding.ensureInitialized();
-  DStack.instance.register(
-      builders: RouterBuilder.builders(), observer: MyLifeCycleObserver());
+  DStack.instance.register(builders: RouterBuilder.builders(), observer: MyLifeCycleObserver());
   runApp(MyApp());
 }
 
@@ -24,12 +23,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance?.addObserver(this);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
 
@@ -43,12 +42,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return MaterialApp(
       navigatorKey: DStack.instance.navigatorKey,
       navigatorObservers: [DStack.instance.dStackNavigatorObserver],
-      home: isFlutterProject
-          ? DStackWidget(
-              homePage: Page1(),
-              homePageRoute: 'page1',
-            )
-          : DStackWidget(),
+      home: DStackWidget(
+        homePage: Page1(),
+        homePageRoute: 'page1',
+      ),
       theme: ThemeData(platform: TargetPlatform.iOS),
     );
   }
@@ -114,14 +111,12 @@ class RouterBuilder {
 class MyLifeCycleObserver extends DLifeCycleObserver {
   @override
   void appDidEnterBackground(PageModel model) {
-    debugPrint(
-        "MyLifeCycleObserver  appDidEnterBackground == ${model.currentPageRoute}");
+    debugPrint("MyLifeCycleObserver  appDidEnterBackground == ${model.currentPageRoute}");
   }
 
   @override
   void appDidEnterForeground(PageModel model) {
-    debugPrint(
-        "MyLifeCycleObserver  appDidEnterForeground == ${model.currentPageRoute}");
+    debugPrint("MyLifeCycleObserver  appDidEnterForeground == ${model.currentPageRoute}");
   }
 
   @override

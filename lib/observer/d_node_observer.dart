@@ -15,7 +15,6 @@ abstract class DNodeObserver {
 }
 
 class DNodeObserverHandler {
-
   static handlerNodeMessage(Map node) {
     DStack.instance.dNodeObserver?.operationNode(node);
   }

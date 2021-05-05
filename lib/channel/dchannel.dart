@@ -18,14 +18,17 @@ import 'package:flutter/services.dart';
 import '../d_stack.dart';
 
 class DChannel {
-  MethodChannel _methodChannel;
+  late MethodChannel _methodChannel;
 
   DChannel(MethodChannel methodChannel) {
     _methodChannel = methodChannel;
-    _methodChannel.setMethodCallHandler((MethodCall call) {
+    _methodChannel.setMethodCallHandler((MethodCall call) async {
       // sendActionToFlutter 处理Native发过来的指令
       if (DStackConstant.nodeToFlutter == call.method) {
-        return DNavigatorManager.handleActionToFlutter(call.arguments);
+        final result = await DNavigatorManager.handleActionToFlutter(call.arguments);
+        if (result != null) {
+          return result!;
+        }
       } else if (DStackConstant.lifeCycle == call.method) {
         return LifeCycleHandler.handleLifecycleMessage(call.arguments);
       } else if (DStackConstant.sendOperationNodeToFlutter == call.method) {
@@ -40,24 +43,19 @@ class DChannel {
   }
 
   Future sendNodeToNative(Map arguments) async {
-    assert(arguments != null);
     return _methodChannel.invokeMethod(DStackConstant.nodeToNative, arguments);
   }
 
   Future sendRemoveFlutterPageNode(Map arguments) async {
-    assert(arguments != null);
     return _methodChannel.invokeMethod(DStackConstant.checkRemoved, arguments);
   }
 
-  Future<List<DStackNode>> getNodeList() async {
-    return _methodChannel
-        .invokeMethod(DStackConstant.nodeList, null)
-        .then((list) {
+  Future<List<DStackNode>?> getNodeList() async {
+    return _methodChannel.invokeMethod(DStackConstant.nodeList, null).then((list) {
       if (list is List) {
         List<DStackNode> nodeList = [];
         list.forEach((element) {
-          DStackNode node = DStackNode(
-              route: element["route"], pageType: element["pageType"]);
+          DStackNode node = DStackNode(route: element["route"], pageType: element["pageType"]);
           nodeList.add(node);
         });
         return Future.value(nodeList);
@@ -67,13 +65,11 @@ class DChannel {
   }
 
   Future sendHomePageRoute(String route) {
-    return _methodChannel.invokeMethod(
-        DStackConstant.sendHomePageRoute, {"homePageRoute": route});
+    return _methodChannel.invokeMethod(DStackConstant.sendHomePageRoute, {"homePageRoute": route});
   }
 
   /// 发送更新临界节点的信息
-  Future sendUpdateBoundaryNode(Map params) {
-    return _methodChannel.invokeMethod(
-        DStackConstant.sendUpdateBoundaryNode, params);
+  Future sendUpdateBoundaryNode(Map? params) {
+    return _methodChannel.invokeMethod(DStackConstant.sendUpdateBoundaryNode, params);
   }
 }

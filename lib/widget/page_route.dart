@@ -25,7 +25,7 @@ const int _kMaxDroppedSwipePageForwardAnimationTime = 800;
 class DStackPopResult<T> {
   /// pop 返回时是否关闭返回动画
   final bool animated;
-  final T result;
+  final T? result;
   DStackPopResult({this.animated = true, this.result});
 }
 
@@ -34,25 +34,16 @@ class DStackPageRouteBuilder<T> extends PageRoute<T> {
   final Duration popTransition;
   final WidgetBuilder pageBuilder;
   final bool fullscreenDialog;
-  final PushAnimationPageBuilder animationBuilder;
+  final PushAnimationPageBuilder? animationBuilder;
   final bool popGesture;
 
-  DStackPageRouteBuilder(
-      {@required this.pageBuilder,
-      RouteSettings settings,
-      this.pushTransition = defaultPushDuration,
-      this.popTransition = defaultPopDuration,
-      this.fullscreenDialog = false,
-      this.maintainState = true,
-      this.animationBuilder,
-      this.popGesture = false})
-      : super(settings: settings, fullscreenDialog: fullscreenDialog);
+  DStackPageRouteBuilder({required this.pageBuilder, RouteSettings? settings, this.pushTransition = defaultPushDuration, this.popTransition = defaultPopDuration, this.fullscreenDialog = false, this.maintainState = true, this.animationBuilder, this.popGesture = false}) : super(settings: settings, fullscreenDialog: fullscreenDialog);
 
   @override
-  Color get barrierColor => null;
+  Color? get barrierColor => null;
 
   @override
-  String get barrierLabel => null;
+  String? get barrierLabel => null;
 
   @override
   final bool maintainState;
@@ -65,36 +56,22 @@ class DStackPageRouteBuilder<T> extends PageRoute<T> {
 
   @override
   bool canTransitionTo(TransitionRoute<dynamic> nextRoute) {
-    return (nextRoute is MaterialPageRoute && !nextRoute.fullscreenDialog) ||
-        (nextRoute is CupertinoPageRoute && !nextRoute.fullscreenDialog) ||
-        (nextRoute is DStackPageRouteBuilder && !nextRoute.fullscreenDialog);
+    return (nextRoute is MaterialPageRoute && !nextRoute.fullscreenDialog) || (nextRoute is CupertinoPageRoute && !nextRoute.fullscreenDialog) || (nextRoute is DStackPageRouteBuilder && !nextRoute.fullscreenDialog);
   }
 
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation) {
+  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
     final Widget child = pageBuilder(context);
     final Widget result = Semantics(
       scopesRoute: true,
       explicitChildNodes: true,
       child: child,
     );
-    assert(() {
-      if (child == null) {
-        throw FlutterError.fromParts(<DiagnosticsNode>[
-          ErrorSummary(
-              'The builder for route "${settings.name}" returned null.'),
-          ErrorDescription('Route builders must never return null.'),
-        ]);
-      }
-      return true;
-    }());
     return result;
   }
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     if (animationBuilder != null) {
       Widget _child = child;
       if (popGesture && Theme.of(context).platform == TargetPlatform.iOS) {
@@ -104,19 +81,18 @@ class DStackPageRouteBuilder<T> extends PageRoute<T> {
           child: child,
         );
       }
-      return animationBuilder(context, animation, secondaryAnimation, _child);
+      return animationBuilder!(context, animation, secondaryAnimation, _child);
     }
     final PageTransitionsTheme theme = Theme.of(context).pageTransitionsTheme;
-    return theme.buildTransitions<T>(
-        this, context, animation, secondaryAnimation, child);
+    return theme.buildTransitions<T>(this, context, animation, secondaryAnimation, child);
   }
 
   @override
-  bool didPop(T result) {
+  bool didPop(T? result) {
     if (result != null && result is DStackPopResult) {
       DStackPopResult pop = result;
       if (!pop.animated) {
-        controller.reverseDuration = Duration.zero;
+        controller?.reverseDuration = Duration.zero;
       }
       return super.didPop(pop.result);
     }
@@ -136,26 +112,24 @@ class DStackPageRouteBuilder<T> extends PageRoute<T> {
     // Fullscreen dialogs aren't dismissible by back swipe.
     if (route.fullscreenDialog) return false;
     // If we're in an animation already, we cannot be manually swiped.
-    if (route.animation.status != AnimationStatus.completed) return false;
+    if (route.animation?.status != AnimationStatus.completed) return false;
     // If we're being popped into, we also cannot be swiped until the pop above
     // it completes. This translates to our secondary animation being
     // dismissed.
-    if (route.secondaryAnimation.status != AnimationStatus.dismissed)
-      return false;
+    if (route.secondaryAnimation?.status != AnimationStatus.dismissed) return false;
     // If we're in a gesture already, we cannot start another.
-    if (route.navigator.userGestureInProgress) return false;
+    if (route.navigator?.userGestureInProgress == true) return false;
 
     // Looks like a back gesture would be welcome!
     return true;
   }
 
-  static _CupertinoBackGestureController<T> _startPopGesture<T>(
-      PageRoute<T> route) {
+  static _CupertinoBackGestureController<T> _startPopGesture<T>(PageRoute<T> route) {
     assert(_isPopGestureEnabled(route));
 
     return _CupertinoBackGestureController<T>(
-      navigator: route.navigator,
-      controller: route.controller, // protected access
+      navigator: route.navigator!,
+      controller: route.controller!, // protected access
     );
   }
 }
@@ -165,10 +139,9 @@ class _CupertinoBackGestureController<T> {
   ///
   /// The [navigator] and [controller] arguments must not be null.
   _CupertinoBackGestureController({
-    @required this.navigator,
-    @required this.controller,
-  })  : assert(navigator != null),
-        assert(controller != null) {
+    required this.navigator,
+    required this.controller,
+  }) {
     navigator.didStartUserGesture();
   }
 
@@ -206,14 +179,10 @@ class _CupertinoBackGestureController<T> {
       // We want to cap the animation time, but we want to use a linear curve
       // to determine it.
       final int droppedPageForwardAnimationTime = min(
-        lerpDouble(
-                _kMaxDroppedSwipePageForwardAnimationTime, 0, controller.value)
-            .floor(),
+        lerpDouble(_kMaxDroppedSwipePageForwardAnimationTime, 0, controller.value)!.floor(),
         _kMaxPageBackAnimationTime,
       );
-      controller.animateTo(1.0,
-          duration: Duration(milliseconds: droppedPageForwardAnimationTime),
-          curve: animationCurve);
+      controller.animateTo(1.0, duration: Duration(milliseconds: droppedPageForwardAnimationTime), curve: animationCurve);
     } else {
       // This route is destined to pop at this point. Reuse navigator's pop.
       navigator.pop();
@@ -221,12 +190,8 @@ class _CupertinoBackGestureController<T> {
       // The popping may have finished inline if already at the target destination.
       if (controller.isAnimating) {
         // Otherwise, use a custom popping animation duration and curve.
-        final int droppedPageBackAnimationTime = lerpDouble(
-                0, _kMaxDroppedSwipePageForwardAnimationTime, controller.value)
-            .floor();
-        controller.animateBack(0.0,
-            duration: Duration(milliseconds: droppedPageBackAnimationTime),
-            curve: animationCurve);
+        final int droppedPageBackAnimationTime = lerpDouble(0, _kMaxDroppedSwipePageForwardAnimationTime, controller.value)!.floor();
+        controller.animateBack(0.0, duration: Duration(milliseconds: droppedPageBackAnimationTime), curve: animationCurve);
       }
     }
 
@@ -234,7 +199,7 @@ class _CupertinoBackGestureController<T> {
       // Keep the userGestureInProgress in true state so we don't change the
       // curve of the page transition mid-flight since CupertinoPageTransition
       // depends on userGestureInProgress.
-      AnimationStatusListener animationStatusCallback;
+      late AnimationStatusListener animationStatusCallback;
       animationStatusCallback = (AnimationStatus status) {
         navigator.didStopUserGesture();
         controller.removeStatusListener(animationStatusCallback);
@@ -248,14 +213,11 @@ class _CupertinoBackGestureController<T> {
 
 class _CupertinoBackGestureDetector<T> extends StatefulWidget {
   const _CupertinoBackGestureDetector({
-    Key key,
-    @required this.enabledCallback,
-    @required this.onStartPopGesture,
-    @required this.child,
-  })  : assert(enabledCallback != null),
-        assert(onStartPopGesture != null),
-        assert(child != null),
-        super(key: key);
+    Key? key,
+    required this.enabledCallback,
+    required this.onStartPopGesture,
+    required this.child,
+  }) : super(key: key);
 
   final Widget child;
 
@@ -264,15 +226,13 @@ class _CupertinoBackGestureDetector<T> extends StatefulWidget {
   final ValueGetter<_CupertinoBackGestureController<T>> onStartPopGesture;
 
   @override
-  _CupertinoBackGestureDetectorState<T> createState() =>
-      _CupertinoBackGestureDetectorState<T>();
+  _CupertinoBackGestureDetectorState<T> createState() => _CupertinoBackGestureDetectorState<T>();
 }
 
-class _CupertinoBackGestureDetectorState<T>
-    extends State<_CupertinoBackGestureDetector<T>> {
-  _CupertinoBackGestureController<T> _backGestureController;
+class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureDetector<T>> {
+  _CupertinoBackGestureController<T>? _backGestureController;
 
-  HorizontalDragGestureRecognizer _recognizer;
+  late HorizontalDragGestureRecognizer _recognizer;
 
   @override
   void initState() {
@@ -299,15 +259,13 @@ class _CupertinoBackGestureDetectorState<T>
   void _handleDragUpdate(DragUpdateDetails details) {
     assert(mounted);
     assert(_backGestureController != null);
-    _backGestureController.dragUpdate(
-        _convertToLogical(details.primaryDelta / context.size.width));
+    _backGestureController!.dragUpdate(_convertToLogical(details.primaryDelta! / context.size!.width));
   }
 
   void _handleDragEnd(DragEndDetails details) {
     assert(mounted);
     assert(_backGestureController != null);
-    _backGestureController.dragEnd(_convertToLogical(
-        details.velocity.pixelsPerSecond.dx / context.size.width));
+    _backGestureController!.dragEnd(_convertToLogical(details.velocity.pixelsPerSecond.dx / context.size!.width));
     _backGestureController = null;
   }
 
@@ -330,7 +288,6 @@ class _CupertinoBackGestureDetectorState<T>
       case TextDirection.ltr:
         return value;
     }
-    return null;
   }
 
   @override
@@ -338,9 +295,7 @@ class _CupertinoBackGestureDetectorState<T>
     assert(debugCheckHasDirectionality(context));
     // For devices with notches, the drag area needs to be larger on the side
     // that has the notch.
-    double dragAreaWidth = Directionality.of(context) == TextDirection.ltr
-        ? MediaQuery.of(context).padding.left
-        : MediaQuery.of(context).padding.right;
+    double dragAreaWidth = Directionality.of(context) == TextDirection.ltr ? MediaQuery.of(context).padding.left : MediaQuery.of(context).padding.right;
     dragAreaWidth = max(dragAreaWidth, _kBackGestureWidth);
     return Stack(
       fit: StackFit.passthrough,

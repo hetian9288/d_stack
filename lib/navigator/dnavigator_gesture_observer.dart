@@ -19,7 +19,7 @@ class DStackNavigatorObserver extends NavigatorObserver {
   factory DStackNavigatorObserver() => _getInstance();
 
   static DStackNavigatorObserver get instance => _getInstance();
-  static DStackNavigatorObserver _instance;
+  static DStackNavigatorObserver? _instance;
   // 避免过度pop
   int routerCount = 0;
 
@@ -29,13 +29,13 @@ class DStackNavigatorObserver extends NavigatorObserver {
     if (_instance == null) {
       _instance = new DStackNavigatorObserver._internal();
     }
-    return _instance;
+    return _instance!;
   }
 
   // 标识手势引起的pop事件
-  String _gesturingRouteName;
-  String get gesturingRouteName => this._gesturingRouteName;
-  void setGesturingRouteName(String gesturingRouteName) {
+  String? _gesturingRouteName;
+  String? get gesturingRouteName => this._gesturingRouteName;
+  void setGesturingRouteName(String? gesturingRouteName) {
     this._gesturingRouteName = gesturingRouteName;
   }
 
@@ -43,16 +43,13 @@ class DStackNavigatorObserver extends NavigatorObserver {
   /// route 路由目标页面
   /// previousRoute 目标页面的上一个页面
   @override
-  void didPush(Route route, Route previousRoute) {
+  void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
-    debugPrint(
-        ' 【didPush】${route.settings.name}【didPush】');
+    debugPrint(' 【didPush】${route.settings.name}【didPush】');
     routerCount += 1;
     if (route is PopupRoute) {
       /// dialog进栈
-      DNavigatorManager.nodeHandle(
-          DStackConstant.flutterDialog, PageType.flutter, DStackConstant.push,
-          route: route);
+      DNavigatorManager.nodeHandle(DStackConstant.flutterDialog, PageType.flutter, DStackConstant.push, route: route);
     }
   }
 
@@ -60,28 +57,23 @@ class DStackNavigatorObserver extends NavigatorObserver {
   /// route 当前操作页面
   /// previousRoute 操作页面的上一个页面
   @override
-  void didPop(Route route, Route previousRoute) {
+  void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
     routerCount -= 1;
-    debugPrint(
-        ' 【didPop】${route.settings.name} 【didPop】');
+    debugPrint(' 【didPop】${route.settings.name} 【didPop】');
     if (route is PopupRoute) {
       /// dialog出栈
-      DNavigatorManager.removeFlutterNode(DStackConstant.flutterDialog,
-          identifier: DNavigatorManager.identifierWithRoute(route));
+      DNavigatorManager.removeFlutterNode(DStackConstant.flutterDialog, identifier: DNavigatorManager.identifierWithRoute(route));
     } else {
-      if (gesturingRouteName != null &&
-          gesturingRouteName == route.settings.name) {
+      if (gesturingRouteName != null && gesturingRouteName == route.settings.name) {
         // 由手势导致的pop事件
         DNavigatorManager.popWithGesture(route);
-      } else if (gesturingRouteName != null &&
-          gesturingRouteName == DStackConstant.nativeDidPopGesture) {
+      } else if (gesturingRouteName != null && gesturingRouteName == DStackConstant.nativeDidPopGesture) {
         // native手势引起的didPop，native侧已经删除节点，flutter侧不再removeFlutterNode
         DStackNavigatorObserver.instance.setGesturingRouteName(null);
       } else {
         if (route.settings.name != null) {
-          DNavigatorManager.removeFlutterNode(route.settings.name,
-              identifier: DNavigatorManager.identifierWithRoute(route));
+          DNavigatorManager.removeFlutterNode(route.settings.name!, identifier: DNavigatorManager.identifierWithRoute(route));
         }
       }
     }
@@ -91,7 +83,7 @@ class DStackNavigatorObserver extends NavigatorObserver {
   /// previousRoute 目标页面的上一个页面
   // 滑动手势开始
   @override
-  void didStartUserGesture(Route route, Route previousRoute) {
+  void didStartUserGesture(Route route, Route? previousRoute) {
     super.didStartUserGesture(route, previousRoute);
     DStackNavigatorObserver.instance.setGesturingRouteName(route.settings.name);
   }

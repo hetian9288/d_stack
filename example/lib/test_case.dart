@@ -17,7 +17,7 @@ class TestCase {
   /// 打开flutter页面用例
   static List<Map> openFlutterPageCase = [
     {
-      "text": "【pop】 有动画",
+      "text": "a【pop】 有动画",
       "clicked": (context) {
         DStack.pop();
       }
@@ -85,8 +85,7 @@ class TestCase {
     {
       "text": "【pushWithAnimation】 flutter page2 有动画，无手势返回",
       "clicked": (context) {
-        DStack.pushWithAnimation("page2", PageType.flutter,
-            (context, animation, secondaryAnimation, child) {
+        DStack.pushWithAnimation("page2", PageType.flutter, (context, animation, secondaryAnimation, child) {
           Offset startOffset = const Offset(1.0, 0.0);
           Offset endOffset = const Offset(0.0, 0.0);
           return SlideTransition(
@@ -102,8 +101,7 @@ class TestCase {
     {
       "text": "【pushWithAnimation】 flutter page2 有动画，有手势返回",
       "clicked": (context) {
-        DStack.pushWithAnimation("page2", PageType.flutter,
-            (context, animation, secondaryAnimation, child) {
+        DStack.pushWithAnimation("page2", PageType.flutter, (context, animation, secondaryAnimation, child) {
           Offset startOffset = const Offset(1.0, 0.0);
           Offset endOffset = const Offset(0.0, 0.0);
           return SlideTransition(
@@ -119,8 +117,7 @@ class TestCase {
     {
       "text": "【pushWithAnimation】 flutter page2 无动画，无手势返回",
       "clicked": (context) {
-        DStack.pushWithAnimation("page2", PageType.flutter,
-            (context, animation, secondaryAnimation, child) {
+        DStack.pushWithAnimation("page2", PageType.flutter, (context, animation, secondaryAnimation, child) {
           Offset startOffset = const Offset(1.0, 0.0);
           Offset endOffset = const Offset(0.0, 0.0);
           return SlideTransition(
@@ -136,8 +133,7 @@ class TestCase {
     {
       "text": "【pushWithAnimation】 flutter page2 无动画，有手势返回",
       "clicked": (context) {
-        DStack.pushWithAnimation("page2", PageType.flutter,
-            (context, animation, secondaryAnimation, child) {
+        DStack.pushWithAnimation("page2", PageType.flutter, (context, animation, secondaryAnimation, child) {
           Offset startOffset = const Offset(1.0, 0.0);
           Offset endOffset = const Offset(0.0, 0.0);
           return SlideTransition(
@@ -153,8 +149,7 @@ class TestCase {
     {
       "text": "【pushWithAnimation】 flutter page2, replace",
       "clicked": (context) {
-        DStack.pushWithAnimation("page2", PageType.flutter,
-            (context, animation, secondaryAnimation, child) {
+        DStack.pushWithAnimation("page2", PageType.flutter, (context, animation, secondaryAnimation, child) {
           Offset startOffset = const Offset(1.0, 0.0);
           Offset endOffset = const Offset(0.0, 0.0);
           return SlideTransition(
@@ -171,8 +166,7 @@ class TestCase {
     {
       "text": "【push】SixViewController 有动画",
       "clicked": (context) {
-        DStack.push("SixViewController", PageType.native,
-            params: {"name": "flutter 传递的", "id": 1000000});
+        DStack.push("SixViewController", PageType.native, params: {"name": "flutter 传递的", "id": 1000000});
       }
     },
     {"text": "", "clicked": (context) {}},
@@ -228,23 +222,18 @@ class TestCase {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("dialog",
-                            style: TextStyle(decoration: TextDecoration.none)),
+                        Text("dialog", style: TextStyle(decoration: TextDecoration.none)),
                         RaisedButton(
                           onPressed: () {
                             DStack.push('page3', PageType.flutter);
                           },
-                          child: Text("进入下一页面",
-                              style:
-                                  TextStyle(decoration: TextDecoration.none)),
+                          child: Text("进入下一页面", style: TextStyle(decoration: TextDecoration.none)),
                         ),
                         RaisedButton(
                           onPressed: () {
                             Navigator.pop(cxt);
                           },
-                          child: Text("关闭弹窗",
-                              style:
-                                  TextStyle(decoration: TextDecoration.none)),
+                          child: Text("关闭弹窗", style: TextStyle(decoration: TextDecoration.none)),
                         )
                       ],
                     ),
@@ -287,29 +276,25 @@ class TestCase {
     {
       "text": "【push】NativePage 有动画",
       "clicked": (context) {
-        DStack.push("NativePage", PageType.native,
-            params: {"name": "flutter 传递的", "id": 1000000});
+        DStack.push("NativePage", PageType.native, params: {"name": "flutter 传递的", "id": 1000000});
       }
     },
     {
       "text": "【push】NativePage 无动画",
       "clicked": (context) {
-        DStack.push("NativePage", PageType.native,
-            params: {"name": "flutter 传递的", "id": 1000000}, animated: false);
+        DStack.push("NativePage", PageType.native, params: {"name": "flutter 传递的", "id": 1000000}, animated: false);
       }
     },
     {
       "text": "【present】NativePage2 有动画",
       "clicked": (context) {
-        DStack.present("NativePage2", PageType.native,
-            params: {"name": "flutter 传递的", "id": 1000000});
+        DStack.present("NativePage2", PageType.native, params: {"name": "flutter 传递的", "id": 1000000});
       }
     },
     {
       "text": "【present】NativePage2 无动画",
       "clicked": (context) {
-        DStack.present("NativePage2", PageType.native,
-            params: {"name": "flutter 传递的", "id": 1000000}, animated: false);
+        DStack.present("NativePage2", PageType.native, params: {"name": "flutter 传递的", "id": 1000000}, animated: false);
       }
     },
   ];
@@ -347,8 +332,7 @@ class TestCase {
     {
       "text": "push SixViewController",
       "clicked": (context) {
-        DStack.push("SixViewController", PageType.native,
-            params: {"data": "flutter 传递给native的参数"});
+        DStack.push("SixViewController", PageType.native, params: {"data": "flutter 传递给native的参数"});
       }
     },
   ];
@@ -390,23 +374,18 @@ class TestCase {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("dialog",
-                            style: TextStyle(decoration: TextDecoration.none)),
+                        Text("dialog", style: TextStyle(decoration: TextDecoration.none)),
                         RaisedButton(
                           onPressed: () {
                             DStack.push('page3', PageType.flutter);
                           },
-                          child: Text("进入下一页面",
-                              style:
-                                  TextStyle(decoration: TextDecoration.none)),
+                          child: Text("进入下一页面", style: TextStyle(decoration: TextDecoration.none)),
                         ),
                         RaisedButton(
                           onPressed: () {
                             Navigator.pop(cxt);
                           },
-                          child: Text("关闭弹窗",
-                              style:
-                                  TextStyle(decoration: TextDecoration.none)),
+                          child: Text("关闭弹窗", style: TextStyle(decoration: TextDecoration.none)),
                         )
                       ],
                     ),
